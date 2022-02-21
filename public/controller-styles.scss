@@ -13,24 +13,37 @@
 			flex: 1 0 auto;
 		}
 		&-button {
-			flex: 0 0 20%;
+			flex: 0 0 15%;
 			background-color: transparent;
 			font-size: 1.5rem;
-			height: 5rem;
+			height: 4.5rem;
 			box-shadow: 1.7px 2.9px 1.7px -36px rgba(0, 0, 0, 0.172),
 				5.8px 9.6px 5.8px -36px rgba(0, 0, 0, 0.265),
 				26px 43px 26px -36px rgba(0, 0, 0, 0.44);
 			cursor: pointer;
+			margin-right: 1rem;
 		}
 	}
 
-	&--speed__container {
-		border-radius: 5px;
-		background: black;
-		height: 0.3rem;
-		margin: 2rem 1rem;
-	}
 	&--speed-slider {
+		width: 10px;
+		height: 25px;
+		border-radius: 3px;
+		position: relative;
+		left: 10px;
+		top: -10px;
+		background: black;
+		cursor: pointer;
+	}
+}
+
+.slider {
+	border-radius: 5px;
+	background: black;
+	height: 0.3rem;
+	margin: 2rem 1rem;
+
+	&-dial {
 		width: 10px;
 		height: 25px;
 		border-radius: 3px;
