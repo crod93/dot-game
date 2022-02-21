@@ -1,0 +1,47 @@
+.controller {
+	&--container {
+		border: 2px solid;
+		padding: 2rem;
+	}
+
+	&--main {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+
+		&-points {
+			flex: 1 0 auto;
+		}
+		&-button {
+			flex: 0 0 20%;
+			background-color: transparent;
+			font-size: 1.5rem;
+			height: 5rem;
+			box-shadow: 1.7px 2.9px 1.7px -36px rgba(0, 0, 0, 0.172),
+				5.8px 9.6px 5.8px -36px rgba(0, 0, 0, 0.265),
+				26px 43px 26px -36px rgba(0, 0, 0, 0.44);
+			cursor: pointer;
+		}
+	}
+
+	&--speed__container {
+		border-radius: 5px;
+		background: black;
+		height: 0.3rem;
+		margin: 2rem 1rem;
+	}
+	&--speed-slider {
+		width: 10px;
+		height: 25px;
+		border-radius: 3px;
+		position: relative;
+		left: 10px;
+		top: -10px;
+		background: black;
+		cursor: pointer;
+	}
+}
+
+.speed-title {
+	font-weight: bold;
+}
