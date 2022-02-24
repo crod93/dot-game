@@ -14,19 +14,28 @@ class Dot {
 		dotElem.style.margin = '0';
 		dotElem.style.border = '2px solid black';
 		dotElem.style.borderRadius = '50%';
+		dotElem.style.top = 0;
+		// dotElem.setAttribute('visibility', 'hidden'); // hide dot until shown on game board
 		dotElem.setAttribute('id', id.toString());
 		gameBoard.appendChild(dotElem);
 
 		this.size = size;
 		this.id = id.toString();
+		this.showDot = false;
+	}
+
+	toggleDotShow() {
+		this.showDot = !this.showDot;
+		// TODO: check if this is correct
+		// dotElem.setAttribute('visibility', 'visible');
 	}
 }
 
 class Game {
 	constructor(numberOfDots) {
 		const [gameBoard] = document.getElementsByTagName('body');
-
-		this.game = {
+		//TODO: double check if this is the correct way of setting values
+		this.gameBoard = {
 			height: gameBoard.offsetHeight,
 			width: gameBoard.offsetWidth,
 		};
@@ -34,6 +43,7 @@ class Game {
 		this.isPlaying = false;
 		this.speed = 0;
 		this.NUMBER_OF_DOTS = numberOfDots;
+		this.dots = [];
 	}
 
 	play() {
@@ -41,28 +51,28 @@ class Game {
 	}
 
 	createDots() {
-		//TODO: revist and do what the comment below says
-		// get .10 of the screen sizes and prevent dots from getting larger than that
-		const MAX_DOT_SIZE = this.game.width * 0.1;
+		//TODO: refactor
+		// 		- Dots should vary randomly in size from 10px in diameter to 100px in diameter.
+		// - A dot's value is inversely proportional to its size, with the smallest dots worth 10 points, and the largest dots worth 1 point.
+
 		const dots = [];
 		let count = 0;
 
 		while (count < this.NUMBER_OF_DOTS) {
-			// create a dot with size between 100 to MAX_DOT_SIZE
-			const rand = Math.random() * 1000;
-			console.log(rand);
-			let size = 0;
-			if (MAX_DOT_SIZE < rand) {
-				size = Math.floor(rand / 5);
-			} else {
-				size = Math.floor(rand);
-			}
+			// 10px in diameter to 100px in diameter.
+			const randSize = Math.floor(Math.random() * 100 + 1);
+			console.log(randSize);
 
-			dots.push(new Dot(count, size));
+			dots.push(new Dot(count, randSize));
 			count++;
 		}
 		console.log(dots);
+		this.dots = dots;
+		this.positionDots();
+		console.log(this.gameBoard);
 	}
+
+	positionDots() {}
 }
 
 const game = new Game(10);
