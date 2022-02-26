@@ -1,5 +1,14 @@
-//TODO: create func until to uses through out
-const getRandomPxSize = () => {};
+/**
+ * Get a random number betwen two values
+ * @constructor
+ * @param {number} min - Min value
+ * @param {number} max - Max value
+ */
+
+const randomIntFromInterval = (min, max) => {
+	// min and max included
+	return Math.floor(Math.random() * (max - min + 1) + min);
+};
 
 class Dot {
 	constructor(id, size) {
@@ -17,17 +26,26 @@ class Dot {
 		dotElem.style.top = 0;
 		// dotElem.setAttribute('visibility', 'hidden'); // hide dot until shown on game board
 		dotElem.setAttribute('id', id.toString());
+		//TODO: add dot class
 		gameBoard.appendChild(dotElem);
 
 		this.size = size;
 		this.id = id.toString();
 		this.showDot = false;
+		this.position = 0;
 	}
 
 	toggleDotShow() {
 		this.showDot = !this.showDot;
 		// TODO: check if this is correct
 		// dotElem.setAttribute('visibility', 'visible');
+	}
+
+	setPosition(position) {
+		const dotElem = document.getElementById(this.id);
+
+		this.position = position;
+		dotElem.style.right = `${position}px`;
 	}
 }
 
@@ -48,11 +66,25 @@ class Game {
 
 	play() {
 		this.createDots();
+
+		// let frameID;
+		// const getDiv = document.getElementsByClassName('frame');
+		// const smoothAnimation = () => {
+		// 	getDiv[0].insertAdjacentHTML('afterend', "<div class='frame'></div>");
+		// 	frameID = requestAnimationFrame(smoothAnimation);
+		// };
+
+		// const onStart = () => {
+		// 	frameID = requestAnimationFrame(smoothAnimation);
+		// };
+
+		// const onStop = () => {
+		// 	cancelAnimationFrame(frameID);
+		// };
 	}
 
 	createDots() {
-		//TODO: refactor
-		// 		- Dots should vary randomly in size from 10px in diameter to 100px in diameter.
+		//TODO:
 		// - A dot's value is inversely proportional to its size, with the smallest dots worth 10 points, and the largest dots worth 1 point.
 
 		const dots = [];
@@ -60,19 +92,30 @@ class Game {
 
 		while (count < this.NUMBER_OF_DOTS) {
 			// 10px in diameter to 100px in diameter.
-			const randSize = Math.floor(Math.random() * 100 + 1);
+			const randSize = randomIntFromInterval(10, 100);
 			console.log(randSize);
 
 			dots.push(new Dot(count, randSize));
 			count++;
 		}
-		console.log(dots);
+
 		this.dots = dots;
 		this.positionDots();
-		console.log(this.gameBoard);
 	}
 
-	positionDots() {}
+	positionDots() {
+		this.dots.forEach((dot) => {
+			//TODO: check if these values have to be unique
+			const randPosition = randomIntFromInterval(
+				0,
+				this.gameBoard.width - dot.size
+			);
+			console.log(randPosition);
+			dot.setPosition(randPosition);
+		});
+	}
+
+	moveDots() {}
 }
 
 const game = new Game(10);
