@@ -20,7 +20,6 @@ class Dot {
 		dotElem.style.height = `${size}px`;
 		dotElem.style.width = `${size}px`;
 
-		// dotElem.setAttribute('visibility', 'hidden'); // hide dot until shown on game board
 		dotElem.setAttribute('id', id.toString());
 		dotElem.classList.add('dot');
 		gameBoard.appendChild(dotElem);
@@ -32,8 +31,6 @@ class Dot {
 
 	toggleDotShow() {
 		this.showDot = !this.showDot;
-		// TODO: check if this is correct
-		// dotElem.setAttribute('visibility', 'visible');
 	}
 
 	setPosition(y, x) {
@@ -52,7 +49,6 @@ class Game {
 			height: gameBoard.offsetHeight,
 			width: gameBoard.offsetWidth,
 		};
-		this.gameRef = null;
 		this.score = 0;
 		this.isPlaying = false;
 		this.speed = 10;
@@ -72,7 +68,6 @@ class Game {
 				this.play();
 			} else {
 				startButton.textContent = 'Start';
-				this.stop();
 			}
 			this.isPlaying = !this.isPlaying;
 		});
@@ -81,7 +76,7 @@ class Game {
 		const speedDial = slider.querySelector('.slider-dial');
 		const speedDisplay = document.getElementById('speed');
 		speedDisplay.textContent = this.speed;
-
+		//TODO: refactor this
 		speedDial.onmousedown = (event) => {
 			event.preventDefault(); // prevent selection start (browser action)
 
@@ -122,23 +117,27 @@ class Game {
 	}
 
 	play() {
+		const maxPos = this.gameBoard.height;
+
 		this.dots.forEach((dot) => {
-			let dotElem = document.getElementById(dot.id);
+			const dotElem = document.getElementById(dot.id);
 			let startPos = 0;
-			const maxPos = this.gameBoard.height;
-			const moveDot = () => {
+
+			const moveDotAcrossScreen = (timestamp) => {
+				console.log({ timestamp });
+				if (!this.isPlaying) return;
 				// reset dot position
 				if (startPos > maxPos) {
 					startPos = 0;
 				}
-
-				if (!this.isPlaying) return;
-
+				console.log('{this.speed', this.speed);
 				startPos += this.speed;
-				dotElem.style.top = `${startPos}px`;
-				requestAnimationFrame(moveDot);
+				console.log(startPos);
+
+				dotElem.style.top = `${startPos % maxPos}px`;
+				requestAnimationFrame(moveDotAcrossScreen);
 			};
-			requestAnimationFrame(moveDot);
+			requestAnimationFrame(moveDotAcrossScreen);
 		});
 	}
 
@@ -152,7 +151,6 @@ class Game {
 		while (count < this.NUMBER_OF_DOTS) {
 			// 10px in diameter to 100px in diameter.
 			const randSize = randomIntFromInterval(10, 100);
-			console.log(randSize);
 
 			dots.push(new Dot(count, randSize));
 			count++;
@@ -168,6 +166,7 @@ class Game {
 		);
 
 		this.dots.forEach((dot) => {
+			// place dots in random position near the top of the screen
 			const randXPosition = randomIntFromInterval(
 				0,
 				this.gameBoard.width - dot.size
@@ -179,10 +178,6 @@ class Game {
 
 			dot.setPosition(randYPosition, randXPosition);
 		});
-	}
-
-	stop() {
-		console.log('stop game');
 	}
 }
 
