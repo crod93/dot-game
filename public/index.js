@@ -24,6 +24,7 @@ class Dot {
 		dotElem.classList.add('dot');
 		gameBoard.appendChild(dotElem);
 
+		this.element = dotElem;
 		this.size = size;
 		this.id = id.toString();
 		this.showDot = false;
@@ -33,11 +34,8 @@ class Dot {
 		this.showDot = !this.showDot;
 	}
 
-	setPosition(y, x) {
-		const dotElem = document.getElementById(this.id);
-
-		dotElem.style.right = `${x}px`;
-		dotElem.style.top = `${y}px`;
+	setPosition(position) {
+		this.element.style.right = `${position}px`;
 	}
 }
 
@@ -53,9 +51,6 @@ class Game {
 		this.isPlaying = false;
 		this.speed = 10;
 		this.NUMBER_OF_DOTS = numberOfDots;
-		this.dots = [];
-		// load dots
-		this.createDots();
 
 		// add game DOM controllers
 		const startButton = document.getElementById('start-btn');
@@ -97,7 +92,7 @@ class Game {
 				// TODO: get this to work correctly
 
 				this.speed = parseInt(newLeft / 10);
-				console.log(this.speed);
+
 				speedDisplay.textContent = this.speed;
 				speedDial.style.left = newLeft + 'px';
 			};
@@ -119,65 +114,38 @@ class Game {
 	play() {
 		const maxPos = this.gameBoard.height;
 
-		this.dots.forEach((dot) => {
-			const dotElem = document.getElementById(dot.id);
-			let startPos = 0;
+		let startPos = 0;
 
-			const moveDotAcrossScreen = (timestamp) => {
-				console.log({ timestamp });
-				if (!this.isPlaying) return;
-				// reset dot position
-				if (startPos > maxPos) {
-					startPos = 0;
-				}
-				console.log('{this.speed', this.speed);
-				startPos += this.speed;
-				console.log(startPos);
-
-				dotElem.style.top = `${startPos % maxPos}px`;
-				requestAnimationFrame(moveDotAcrossScreen);
-			};
-			requestAnimationFrame(moveDotAcrossScreen);
-		});
-	}
-
-	createDots() {
-		//TODO:
-		// - A dot's value is inversely proportional to its size, with the smallest dots worth 10 points, and the largest dots worth 1 point.
-
-		const dots = [];
-		let count = 0;
-
-		while (count < this.NUMBER_OF_DOTS) {
+		const moveDotAcrossScreen = (timestamp) => {
+			if (!this.isPlaying) return;
 			// 10px in diameter to 100px in diameter.
 			const randSize = randomIntFromInterval(10, 100);
 
-			dots.push(new Dot(count, randSize));
-			count++;
-		}
+			const dot = new Dot(Math.floor(timestamp), randSize);
+			// this.positionDot(dot);
+			console.log({ timestamp });
 
-		this.dots = dots;
-		this.positionDots();
+			// reset dot position
+			if (startPos > maxPos) {
+				startPos = 0;
+			}
+
+			startPos += this.speed;
+
+			dot.element.style.top = `${startPos + 20}px`;
+			requestAnimationFrame(moveDotAcrossScreen);
+		};
+		requestAnimationFrame(moveDotAcrossScreen);
 	}
 
-	positionDots() {
-		const [gameController] = document.getElementsByClassName(
-			'controller--container'
+	positionDot(dot) {
+		// place dots in random position near the top of the screen
+		const randPosition = randomIntFromInterval(
+			0,
+			this.gameBoard.width - dot.size
 		);
 
-		this.dots.forEach((dot) => {
-			// place dots in random position near the top of the screen
-			const randXPosition = randomIntFromInterval(
-				0,
-				this.gameBoard.width - dot.size
-			);
-			const randYPosition = randomIntFromInterval(
-				0,
-				gameController.offsetHeight - dot.size
-			);
-
-			dot.setPosition(randYPosition, randXPosition);
-		});
+		dot.setPosition(randPosition);
 	}
 }
 
