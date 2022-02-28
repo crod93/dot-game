@@ -11,27 +11,22 @@ const randomIntFromInterval = (min, max) => {
 };
 
 class Dot {
-	constructor(id, size) {
+	constructor(id, size, color = 'white') {
 		// add dot to DOM with size
-		const [gameBoard] = document.getElementsByTagName('body');
+		const gameBoard = document.body;
 
 		const dotElem = document.createElement('span');
 
 		dotElem.style.height = `${size}px`;
 		dotElem.style.width = `${size}px`;
+		dotElem.style.backgroundColor = color;
 
 		dotElem.setAttribute('id', id.toString());
 		dotElem.classList.add('dot');
 		gameBoard.appendChild(dotElem);
 
 		this.element = dotElem;
-		this.size = size;
 		this.id = id.toString();
-		this.showDot = false;
-	}
-
-	toggleDotShow() {
-		this.showDot = !this.showDot;
 	}
 
 	setPosition(position) {
@@ -40,8 +35,8 @@ class Dot {
 }
 
 class Game {
-	constructor(numberOfDots) {
-		const [gameBoard] = document.getElementsByTagName('body');
+	constructor() {
+		const gameBoard = document.body;
 
 		this.gameBoard = {
 			height: gameBoard.offsetHeight,
@@ -50,7 +45,7 @@ class Game {
 		this.score = 0;
 		this.isPlaying = false;
 		this.speed = 10;
-		this.NUMBER_OF_DOTS = numberOfDots;
+		this.DOT_COLORS = ['#694dff', '#FEC0ED', '#F9897C', '##D3FEEF'];
 
 		// add game DOM controllers
 		const startButton = document.getElementById('start-btn');
@@ -112,41 +107,44 @@ class Game {
 	}
 
 	play() {
-		const maxPos = this.gameBoard.height;
+		const start = performance.now();
 
-		let startPos = 0;
+		const moveDotAcrossScreen = (currentTime) => {
+			const elapsed = currentTime - start;
+			const progress = elapsed / 1000;
+			const amountToMove = progress + this.gameBoard.height;
 
-		const moveDotAcrossScreen = (timestamp) => {
 			if (!this.isPlaying) return;
-			// 10px in diameter to 100px in diameter.
-			const randSize = randomIntFromInterval(10, 100);
 
-			const dot = new Dot(Math.floor(timestamp), randSize);
-			// this.positionDot(dot);
-			console.log({ timestamp });
+			const dot = this.createDot();
 
-			// reset dot position
-			if (startPos > maxPos) {
-				startPos = 0;
-			}
+			dot.element.style.top = `${amountToMove}px`;
 
-			startPos += this.speed;
-
-			dot.element.style.top = `${startPos + 20}px`;
 			requestAnimationFrame(moveDotAcrossScreen);
 		};
 		requestAnimationFrame(moveDotAcrossScreen);
 	}
 
-	positionDot(dot) {
-		// place dots in random position near the top of the screen
+	createDot() {
+		// 10px in diameter to 100px in diameter.
+		const randSize = randomIntFromInterval(10, 100);
 		const randPosition = randomIntFromInterval(
 			0,
-			this.gameBoard.width - dot.size
+			document.body.clientWidth - randSize
 		);
-
+		const colorIndex = randomIntFromInterval(0, this.DOT_COLORS.length);
+		const dot = new Dot(randPosition, randSize, this.DOT_COLORS[colorIndex]);
 		dot.setPosition(randPosition);
+
+		// add to score and delete node if clicked
+		dot.element.addEventListener('click', () => {
+			const pointElem = document.getElementById('points');
+			this.score += 10;
+			pointElem.textContent = this.score;
+			dot.element.remove();
+		});
+		return dot;
 	}
 }
 
-new Game(10);
+new Game();
