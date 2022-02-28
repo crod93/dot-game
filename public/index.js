@@ -28,7 +28,6 @@ class Dot {
 		this.size = size;
 		this.id = id.toString();
 		this.showDot = false;
-		this.position = 0;
 	}
 
 	toggleDotShow() {
@@ -37,11 +36,11 @@ class Dot {
 		// dotElem.setAttribute('visibility', 'visible');
 	}
 
-	setPosition(position) {
+	setPosition(y, x) {
 		const dotElem = document.getElementById(this.id);
 
-		this.position = position;
-		dotElem.style.right = `${position}px`;
+		dotElem.style.right = `${x}px`;
+		dotElem.style.top = `${y}px`;
 	}
 }
 
@@ -59,6 +58,8 @@ class Game {
 		this.speed = 10;
 		this.NUMBER_OF_DOTS = numberOfDots;
 		this.dots = [];
+		// load dots
+		this.createDots();
 
 		// add game DOM controllers
 		const startButton = document.getElementById('start-btn');
@@ -121,18 +122,23 @@ class Game {
 	}
 
 	play() {
-		this.createDots();
-
 		this.dots.forEach((dot) => {
 			let dotElem = document.getElementById(dot.id);
 			let startPos = 0;
 			const maxPos = this.gameBoard.height;
-			const moveStone = () => {
+			const moveDot = () => {
+				// reset dot position
+				if (startPos > maxPos) {
+					startPos = 0;
+				}
+
+				if (!this.isPlaying) return;
+
 				startPos += this.speed;
-				dotElem.style.top = (startPos % maxPos) + 'px';
-				requestAnimationFrame(moveStone);
+				dotElem.style.top = `${startPos}px`;
+				requestAnimationFrame(moveDot);
 			};
-			requestAnimationFrame(moveStone);
+			requestAnimationFrame(moveDot);
 		});
 	}
 
@@ -157,17 +163,23 @@ class Game {
 	}
 
 	positionDots() {
+		const [gameController] = document.getElementsByClassName(
+			'controller--container'
+		);
+
 		this.dots.forEach((dot) => {
-			const randPosition = randomIntFromInterval(
+			const randXPosition = randomIntFromInterval(
 				0,
 				this.gameBoard.width - dot.size
 			);
+			const randYPosition = randomIntFromInterval(
+				0,
+				gameController.offsetHeight - dot.size
+			);
 
-			dot.setPosition(randPosition);
+			dot.setPosition(randYPosition, randXPosition);
 		});
 	}
-
-	moveDots() {}
 
 	stop() {
 		console.log('stop game');
