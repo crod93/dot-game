@@ -15,10 +15,19 @@ class Dot {
 
 		this.element = dotElem;
 		this.id = id.toString();
+		this.position = [0, 0]; // this a tuple, used x,y numbers
+		this.size = size;
 	}
 
-	setPosition(position) {
+	//TODO: refactor to one position function
+	setPositionX(position) {
 		this.element.style.right = `${position}px`;
+		this.position[0] = position;
+	}
+
+	setPositionY(position) {
+		this.element.style.top = `${position}px`;
+		this.position[1] = position;
 	}
 }
 
@@ -32,23 +41,14 @@ class Game {
 		};
 		this.score = 0;
 		this.isPlaying = false;
+		this.dots = [];
 		this.speed = 10;
 		this.DOT_COLORS = ['#694dff', '#FEC0ED', '#F9897C', '##D3FEEF'];
-
-		// add game DOM controllers
-		const startButton = document.getElementById('start-btn');
-
-		startButton.addEventListener('click', (event) => {
-			console.log(event);
-			if (!this.isPlaying) {
-				startButton.textContent = 'Pause';
-
-				this.play();
-			} else {
-				startButton.textContent = 'Start';
-			}
-			this.isPlaying = !this.isPlaying;
-		});
+		this.DOT_SPAWN_RATE = 1000;
+		this.MAX_DOT_SIZE = 100;
+		this.PX_SPEED = 10;
+		this.intervalRef = null;
+		this.animateRef = null;
 
 		// speed dial
 		const speedDial = slider.querySelector('.slider-dial');
@@ -95,22 +95,38 @@ class Game {
 	}
 
 	play() {
-		const start = performance.now();
+		this.intervalRef = setInterval(
+			this.spawnDots.bind(this),
+			this.DOT_SPAWN_RATE
+		);
 
-		const moveDotAcrossScreen = (currentTime) => {
-			const elapsed = currentTime - start;
-			const progress = elapsed / 1000;
-			const amountToMove = progress + this.gameBoard.height;
+		this.animateRef = requestAnimationFrame(this.moveDots.bind(this));
+	}
 
-			if (!this.isPlaying) return;
+	render() {
+		const startButton = document.getElementById('start-btn');
 
-			const dot = this.createDot();
+		startButton.addEventListener('click', (event) => {
+			console.log(event);
+			if (!this.isPlaying) {
+				startButton.textContent = 'Pause';
 
-			dot.element.style.top = `${amountToMove}px`;
+				this.play();
+			} else {
+				startButton.textContent = 'Start';
+				this.stop();
+			}
+			this.isPlaying = !this.isPlaying;
+		});
+	}
 
-			requestAnimationFrame(moveDotAcrossScreen);
-		};
-		requestAnimationFrame(moveDotAcrossScreen);
+	stop() {
+		clearInterval(this.intervalRef);
+		cancelAnimationFrame(this.animateRef);
+	}
+
+	spawnDots() {
+		this.dots = [...this.dots, this.createDot()];
 	}
 
 	createDot() {
@@ -118,20 +134,63 @@ class Game {
 		const randSize = this.randomIntFromInterval(10, 100);
 		const randPosition = this.randomIntFromInterval(
 			0,
-			document.body.clientWidth - randSize
+			this.gameBoard.width - randSize
 		);
 		const colorIndex = this.randomIntFromInterval(0, this.DOT_COLORS.length);
 		const dot = new Dot(randPosition, randSize, this.DOT_COLORS[colorIndex]);
-		dot.setPosition(randPosition);
+		dot.setPositionX(randPosition);
 
-		// add to score and delete node if clicked
-		dot.element.addEventListener('click', () => {
-			const pointElem = document.getElementById('points');
-			this.score += 10;
-			pointElem.textContent = this.score;
-			dot.element.remove();
-		});
+		dot.element.addEventListener('click', this.dotClicked.bind(this));
 		return dot;
+	}
+
+	moveDots() {
+		const oldDots = this.dots;
+		const newDots = [];
+
+		oldDots.forEach((dot) => {
+			const {
+				position: [, currentY],
+			} = dot;
+
+			const newY = currentY + (this.PX_SPEED * this.speed) / 60;
+			dot.setPositionY(newY);
+
+			if (newY <= this.gameBoard.height - dot.size / 2) {
+				newDots.push(dot);
+			}
+		});
+
+		this.animateRef = requestAnimationFrame(this.moveDots.bind(this));
+		return newDots;
+	}
+
+	dotClicked(event) {
+		const { target } = event;
+
+		// delete node from DOM and state
+		target.remove();
+		const newDots = this.dots.filter((dot) => {
+			if (dot.id === target.id) {
+				//do this if this is the dot clicked, otherwise update dot state without clicked dot
+				this.updateScore(dot);
+			}
+
+			return dot.id !== target.id;
+		});
+
+		this.dots = newDots;
+	}
+
+	updateScore(dot) {
+		const { size } = dot;
+		const newScore = this.MAX_DOT_SIZE - size;
+
+		this.score += newScore;
+
+		const scoreBoard = document.getElementById('points');
+
+		scoreBoard.textContent = this.score;
 	}
 
 	randomIntFromInterval(min, max) {
@@ -140,4 +199,5 @@ class Game {
 	}
 }
 
-new Game();
+const game = new Game();
+game.render();
