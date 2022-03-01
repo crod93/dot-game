@@ -1,15 +1,3 @@
-/**
- * Get a random number betwen two values
- * @constructor
- * @param {number} min - Min value
- * @param {number} max - Max value
- */
-
-const randomIntFromInterval = (min, max) => {
-	// min and max included
-	return Math.floor(Math.random() * (max - min + 1) + min);
-};
-
 class Dot {
 	constructor(id, size, color = 'white') {
 		// add dot to DOM with size
@@ -127,12 +115,12 @@ class Game {
 
 	createDot() {
 		// 10px in diameter to 100px in diameter.
-		const randSize = randomIntFromInterval(10, 100);
-		const randPosition = randomIntFromInterval(
+		const randSize = this.randomIntFromInterval(10, 100);
+		const randPosition = this.randomIntFromInterval(
 			0,
 			document.body.clientWidth - randSize
 		);
-		const colorIndex = randomIntFromInterval(0, this.DOT_COLORS.length);
+		const colorIndex = this.randomIntFromInterval(0, this.DOT_COLORS.length);
 		const dot = new Dot(randPosition, randSize, this.DOT_COLORS[colorIndex]);
 		dot.setPosition(randPosition);
 
@@ -144,6 +132,11 @@ class Game {
 			dot.element.remove();
 		});
 		return dot;
+	}
+
+	randomIntFromInterval(min, max) {
+		// min and max included
+		return Math.floor(Math.random() * (max - min + 1) + min);
 	}
 }
 
