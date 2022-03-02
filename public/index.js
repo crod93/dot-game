@@ -1,6 +1,7 @@
 class Dot {
 	constructor(id, size, color = 'white') {
 		// add dot to DOM with size
+		// TODO: think about removing this
 		const gameBoard = document.body;
 
 		const dotElem = document.createElement('span');
@@ -107,15 +108,14 @@ class Game {
 
 	render() {
 		const startButton = document.getElementById('start-btn');
-		const gamePlayground = document.getElementById('game-playground');
 
-		gamePlayground.addEventListener('click', (event) => {
+		document.body.addEventListener('click', (event) => {
+			console.log(event.target);
 			debugger;
-			this.onDotClick(event);
 		});
 
 		startButton.addEventListener('click', (event) => {
-			console.log(event);
+			event.stopPropagation();
 			if (!this.isPlaying) {
 				startButton.textContent = 'Pause';
 
