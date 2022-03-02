@@ -32,7 +32,7 @@ class Dot {
 
 class Game {
 	constructor() {
-		const gameBoard = document.body;
+		const gameBoard = document.getElementById('game-playground');
 
 		this.gameBoard = {
 			height: gameBoard.offsetHeight,
@@ -138,7 +138,7 @@ class Game {
 		const colorIndex = this.randomIntFromInterval(0, this.DOT_COLORS.length);
 		const dot = new Dot(randPosition, randSize, this.DOT_COLORS[colorIndex]);
 
-		document.body.appendChild(dot.dotElem);
+		document.getElementById('game-playground').appendChild(dot.dotElem);
 		dot.setPositionX(randPosition);
 
 		dot.dotElem.addEventListener('click', (event) => {

@@ -9,18 +9,20 @@
 		/>
 	</head>
 	<body>
-		<div class="controller--container">
-			<div class="controller--main">
-				<h1 class="controller--main-points">
-					Points: <span id="points">0</span>
-				</h1>
-				<button id="start-btn" class="controller--main-button">Start</button>
+		<main id="game-playground">
+			<div class="controller--container">
+				<div class="controller--main">
+					<h1 class="controller--main-points">
+						Points: <span id="points">0</span>
+					</h1>
+					<button id="start-btn" class="controller--main-button">Start</button>
+				</div>
+				<div class="slider" id="slider">
+					<div class="slider-dial"></div>
+					<span class="speed-title">Speed <span id="speed"></span></span>
+				</div>
 			</div>
-			<div class="slider" id="slider">
-				<div class="slider-dial"></div>
-				<span class="speed-title">Speed <span id="speed"></span></span>
-			</div>
-		</div>
+		</main>
 
 		<script src="/index.js"></script>
 	</body>
