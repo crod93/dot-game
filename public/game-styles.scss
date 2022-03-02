@@ -9,8 +9,21 @@
 	z-index: -1;
 }
 
+.game-state--paused {
+	text-align: center;
+	margin-top: 4rem;
+	text-transform: capitalize;
+	display: none;
+}
+
 #game-playground {
 	position: relative;
 	z-index: 1;
 	min-height: 100vh;
+}
+
+.game-playground--paused {
+	background-image: linear-gradient(358deg, #ffffff, #f2073b) !important;
+	background-size: 400% 400%;
+	animation: blinking 2s ease infinite;
 }

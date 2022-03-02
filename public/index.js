@@ -105,8 +105,7 @@ class Game {
 	render() {
 		const startButton = document.getElementById('start-btn');
 
-		startButton.addEventListener('click', (event) => {
-			event.stopPropagation();
+		startButton.addEventListener('click', () => {
 			if (!this.isPlaying) {
 				startButton.textContent = 'Pause';
 
@@ -115,7 +114,9 @@ class Game {
 				startButton.textContent = 'Start';
 				this.stop();
 			}
+
 			this.isPlaying = !this.isPlaying;
+			this.togglePausedDisplay();
 		});
 	}
 
@@ -205,6 +206,20 @@ class Game {
 		const scoreBoard = document.getElementById('points');
 
 		scoreBoard.textContent = this.score;
+	}
+
+	togglePausedDisplay() {
+		const [pausedTitle] = document.getElementsByClassName('game-state--paused');
+		const gameBoard = document.getElementById('game-playground');
+
+		pausedTitle.style.display = !this.isPlaying ? 'block' : 'none';
+
+		// toggling of paused styles
+		if (!this.isPlaying) {
+			gameBoard.classList.add('game-playground--paused');
+		} else {
+			gameBoard.classList.remove('game-playground--paused');
+		}
 	}
 
 	randomIntFromInterval(min, max) {
