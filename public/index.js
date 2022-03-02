@@ -1,9 +1,6 @@
 class Dot {
 	constructor(id, size, color = 'white') {
 		// add dot to DOM with size
-		// TODO: think about removing this
-		const gameBoard = document.body;
-
 		const dotElem = document.createElement('span');
 
 		dotElem.style.height = `${size}px`;
@@ -13,23 +10,21 @@ class Dot {
 		//TODO: use something else rather than id
 		dotElem.setAttribute('id', id.toString());
 		dotElem.classList.add('dot');
-		gameBoard.appendChild(dotElem);
 
 		this.id = id.toString();
 		this.position = [0, 0]; // this a tuple, used x,y numbers
 		this.size = size;
+		this.dotElem = dotElem;
 	}
 
 	//TODO: refactor to one position function
 	setPositionX(position) {
-		const dotElem = document.getElementById(this.id);
-		dotElem.style.right = `${position}px`;
+		this.dotElem.style.right = `${position}px`;
 		this.position[0] = position;
 	}
 
 	setPositionY(position) {
-		const dotElem = document.getElementById(this.id);
-		dotElem.style.top = `${position}px`;
+		this.dotElem.style.top = `${position}px`;
 		this.position[1] = position;
 	}
 }
@@ -109,11 +104,6 @@ class Game {
 	render() {
 		const startButton = document.getElementById('start-btn');
 
-		document.body.addEventListener('click', (event) => {
-			console.log(event.target);
-			debugger;
-		});
-
 		startButton.addEventListener('click', (event) => {
 			event.stopPropagation();
 			if (!this.isPlaying) {
@@ -146,7 +136,13 @@ class Game {
 		);
 		const colorIndex = this.randomIntFromInterval(0, this.DOT_COLORS.length);
 		const dot = new Dot(randPosition, randSize, this.DOT_COLORS[colorIndex]);
+
+		document.body.appendChild(dot.dotElem);
 		dot.setPositionX(randPosition);
+
+		dot.dotElem.addEventListener('click', (event) => {
+			this.onDotClick(event);
+		});
 
 		return dot;
 	}
@@ -161,17 +157,17 @@ class Game {
 				position: [, currentY],
 				size,
 				id,
+				dotElem,
 			} = dot;
-			const dotElem = document.getElementById(id);
+
 			//TODO: double check
 			const newY = currentY + (this.PX_SPEED * this.speed) / FRAMES_PER_SECOND;
 			dot.setPositionY(newY);
 
 			if (newY <= this.gameBoard.height - size) {
-				console.log(this.dots, newY);
+				// console.log(this.dots, newY);
 				newDots.push(dot);
 			} else {
-				console.log('nope', newY);
 				this.removeDot(id, dotElem);
 			}
 		});
@@ -182,15 +178,15 @@ class Game {
 
 	onDotClick(event) {
 		const { target } = event;
-		debugger;
+
 		if (this.isPlaying) {
+			//TODO: refactor if possible
 			this.removeDot(target.id, target);
 		}
 	}
-
+	//TODO: decouple remove dot from update score, refactor
 	removeDot(dotId, node, updateScore = false) {
 		// delete node from DOM and state
-
 		node.remove();
 
 		const newDots = this.dots.filter((dot) => {
