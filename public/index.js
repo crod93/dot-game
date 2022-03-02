@@ -7,8 +7,9 @@ class Dot {
 		dotElem.style.width = `${size}px`;
 		dotElem.style.backgroundColor = color;
 
-		//TODO: use something else rather than id
 		dotElem.setAttribute('id', id.toString());
+		dotElem.setAttribute('data-size', size);
+		dotElem.setAttribute('data-value', id);
 		dotElem.classList.add('dot');
 
 		this.id = id.toString();
@@ -151,12 +152,11 @@ class Game {
 		const oldDots = this.dots;
 		const newDots = [];
 		const FRAMES_PER_SECOND = 60;
-		//TODO: look into performance issues
+
 		oldDots.forEach((dot) => {
 			const {
 				position: [, currentY],
 				size,
-				id,
 				dotElem,
 			} = dot;
 
@@ -164,11 +164,12 @@ class Game {
 			const newY = currentY + (this.PX_SPEED * this.speed) / FRAMES_PER_SECOND;
 			dot.setPositionY(newY);
 
+			// if dot is in screen, move otherwise delete
 			if (newY <= this.gameBoard.height - size) {
 				// console.log(this.dots, newY);
 				newDots.push(dot);
 			} else {
-				this.removeDot(id, dotElem);
+				this.removeDot(dotElem);
 			}
 		});
 
@@ -178,32 +179,26 @@ class Game {
 
 	onDotClick(event) {
 		const { target } = event;
+		const dotSize = target.getAttribute('data-size');
 
 		if (this.isPlaying) {
-			//TODO: refactor if possible
-			this.removeDot(target.id, target);
+			this.removeDot(target);
+			this.updateScore(dotSize);
 		}
 	}
-	//TODO: decouple remove dot from update score, refactor
-	removeDot(dotId, node, updateScore = false) {
+
+	removeDot(dotElem) {
+		const dotId = dotElem.getAttribute('data-value');
 		// delete node from DOM and state
-		node.remove();
+		dotElem.remove();
 
-		const newDots = this.dots.filter((dot) => {
-			if (dot.id === dotId && updateScore) {
-				//do this if this is the dot clicked, otherwise update dot state without clicked dot
-				this.updateScore(dot);
-			}
-
-			return dot.id !== dotId;
-		});
+		const newDots = this.dots.filter((dot) => dotId !== dot.id);
 
 		this.dots = newDots;
 	}
 
-	updateScore(dot) {
-		const { size } = dot;
-		const newScore = this.MAX_DOT_SIZE - size;
+	updateScore(dotSize) {
+		const newScore = this.MAX_DOT_SIZE - dotSize;
 
 		this.score += newScore;
 
