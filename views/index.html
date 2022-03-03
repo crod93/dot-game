@@ -17,9 +17,18 @@
 					</h1>
 					<button id="start-btn" class="controller--main-button">Start</button>
 				</div>
-				<div class="slider" id="slider">
-					<div class="slider-dial"></div>
-					<span class="speed-title">Speed <span id="speed"></span></span>
+				<div id="slider" class="slider">
+					<input
+						id="slider-dial"
+						class="slider-dial"
+						type="range"
+						min="10"
+						max="100"
+						value="1"
+					/>
+					<label class="speed-title"
+						>Speed <span id="speed-value">10</span></label
+					>
 				</div>
 			</div>
 			<h1 class="game-state--paused">Game is currently paused</h1>

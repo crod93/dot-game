@@ -41,23 +41,28 @@
 }
 
 .slider {
-	border-radius: 5px;
-	background: black;
-	height: 0.3rem;
-	margin: 2rem 1rem;
-
 	&-dial {
-		width: 10px;
-		height: 25px;
-		border-radius: 3px;
-		position: relative;
-		left: 0;
-		top: -10px;
+		width: 100%;
+		-webkit-appearance: none;
+		height: 7px;
 		background: black;
-		cursor: pointer;
+		border-radius: 5px;
+		margin-bottom: 1rem;
+
+		&::-webkit-slider-thumb {
+			-webkit-appearance: none;
+			border: 1px solid #000000;
+			height: 36px;
+			width: 16px;
+			border-radius: 3px;
+			background: #ffffff;
+			cursor: pointer;
+			box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+		}
 	}
 }
 
 .speed-title {
 	font-weight: bold;
+	display: block;
 }

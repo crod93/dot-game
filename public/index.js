@@ -1,3 +1,4 @@
+//TODO: add on hover animation for button
 class Dot {
 	constructor(id, size, color = 'white') {
 		// add dot to DOM with size
@@ -48,49 +49,6 @@ class Game {
 		this.PX_SPEED = 10;
 		this.intervalRef = null;
 		this.animateRef = null;
-
-		// speed dial
-		const speedDial = slider.querySelector('.slider-dial');
-		const speedDisplay = document.getElementById('speed');
-		speedDisplay.textContent = this.speed;
-		//TODO: refactor this
-		speedDial.onmousedown = (event) => {
-			event.preventDefault(); // prevent selection start (browser action)
-
-			let shiftX = event.clientX - speedDial.getBoundingClientRect().left;
-
-			const onMouseMove = (event) => {
-				let newLeft =
-					event.clientX - shiftX - slider.getBoundingClientRect().left;
-
-				// the pointer is out of slider => lock the thumb within the bounaries
-				if (newLeft < 0) {
-					newLeft = 0;
-				}
-				let rightEdge = slider.offsetWidth - speedDial.offsetWidth;
-				if (newLeft > rightEdge) {
-					newLeft = rightEdge;
-				}
-				// TODO: get this to work correctly
-
-				this.speed = parseInt(newLeft / 10);
-
-				speedDisplay.textContent = this.speed;
-				speedDial.style.left = newLeft + 'px';
-			};
-
-			const onMouseUp = () => {
-				document.removeEventListener('mouseup', onMouseUp);
-				document.removeEventListener('mousemove', onMouseMove);
-			};
-
-			document.addEventListener('mousemove', onMouseMove);
-			document.addEventListener('mouseup', onMouseUp);
-		};
-
-		speedDial.ondragstart = () => {
-			return false;
-		};
 	}
 
 	play() {
@@ -105,6 +63,9 @@ class Game {
 	render() {
 		const startButton = document.getElementById('start-btn');
 
+		const speedDial = document.getElementById('slider-dial');
+		const speedLabel = document.getElementById('speed-value');
+
 		startButton.addEventListener('click', () => {
 			if (!this.isPlaying) {
 				startButton.textContent = 'Pause';
@@ -117,6 +78,12 @@ class Game {
 
 			this.isPlaying = !this.isPlaying;
 			this.togglePausedDisplay();
+		});
+
+		speedDial.addEventListener('change', (event) => {
+			const newSpeed = parseInt(event.target.value, 10);
+			this.speed = newSpeed;
+			speedLabel.textContent = newSpeed;
 		});
 	}
 
@@ -162,7 +129,8 @@ class Game {
 			} = dot;
 
 			//TODO: double check
-			const newY = currentY + (this.PX_SPEED * this.speed) / FRAMES_PER_SECOND;
+			// const newY = currentY + (this.PX_SPEED * this.speed) / FRAMES_PER_SECOND;
+			const newY = currentY + this.speed / FRAMES_PER_SECOND;
 			dot.setPositionY(newY);
 
 			// if dot is in screen, move otherwise delete
@@ -191,7 +159,7 @@ class Game {
 	removeDot(dotElem) {
 		const dotId = dotElem.getAttribute('data-value');
 		// delete node from DOM and state
-		dotElem.remove();
+		dotElem.parentNode.removeChild(dotElem);
 
 		const newDots = this.dots.filter((dot) => dotId !== dot.id);
 
