@@ -1,28 +1,23 @@
 //TODO: add on hover animation for button
 class Dot {
-	constructor(id, size, color = 'white') {
+	constructor(id, size, color = 'white', position = [0, 0]) {
 		// add dot to DOM with size
 		const dotElem = document.createElement('span');
 
 		dotElem.style.height = `${size}px`;
 		dotElem.style.width = `${size}px`;
 		dotElem.style.backgroundColor = color;
-
 		dotElem.setAttribute('id', id.toString());
 		dotElem.setAttribute('data-size', size);
 		dotElem.setAttribute('data-value', id);
 		dotElem.classList.add('dot');
+		dotElem.style.right = `${position[0]}px`;
+		dotElem.style.top = `${position[1]}px`;
 
 		this.id = id.toString();
-		this.position = [0, 0]; // this a tuple, used x,y numbers
+		this.position = position; // this a tuple, used x,y numbers
 		this.size = size;
 		this.dotElem = dotElem;
-	}
-
-	//TODO: refactor to one position function
-	setPositionX(position) {
-		this.dotElem.style.right = `${position}px`;
-		this.position[0] = position;
 	}
 
 	setPositionY(position) {
@@ -34,11 +29,13 @@ class Dot {
 class Game {
 	constructor() {
 		const gameBoard = document.getElementById('game-playground');
+		const gameController = document.getElementById('controller--container');
 
 		this.gameBoard = {
 			height: gameBoard.offsetHeight,
 			width: gameBoard.offsetWidth,
 		};
+		this.gameControllerElem = gameController;
 		this.score = 0;
 		this.isPlaying = false;
 		this.dots = [];
@@ -104,10 +101,18 @@ class Game {
 			this.gameBoard.width - randSize
 		);
 		const colorIndex = this.randomIntFromInterval(0, this.DOT_COLORS.length);
-		const dot = new Dot(randPosition, randSize, this.DOT_COLORS[colorIndex]);
+		const initialPosition = [
+			randPosition,
+			this.gameControllerElem.offsetHeight / 2,
+		];
+		const dot = new Dot(
+			randPosition,
+			randSize,
+			this.DOT_COLORS[colorIndex],
+			initialPosition
+		);
 
 		document.getElementById('game-playground').appendChild(dot.dotElem);
-		dot.setPositionX(randPosition);
 
 		dot.dotElem.addEventListener('click', (event) => {
 			this.onDotClick(event);
@@ -130,9 +135,10 @@ class Game {
 
 			//TODO: double check
 			// const newY = currentY + (this.PX_SPEED * this.speed) / FRAMES_PER_SECOND;
-			const newY = currentY + this.speed / FRAMES_PER_SECOND;
+			const newY = Math.ceil(currentY + this.speed / FRAMES_PER_SECOND);
 			dot.setPositionY(newY);
 
+			//TODO: refactor to destroy dot at a different value
 			// if dot is in screen, move otherwise delete
 			if (newY <= this.gameBoard.height - size) {
 				// console.log(this.dots, newY);
