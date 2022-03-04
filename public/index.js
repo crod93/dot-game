@@ -1,4 +1,3 @@
-//TODO: add on hover animation for button
 class Dot {
 	constructor(id, size, color = 'white', position = [0, 0]) {
 		// add dot to DOM with size
@@ -9,7 +8,6 @@ class Dot {
 		dotElem.style.backgroundColor = color;
 		dotElem.setAttribute('id', id.toString());
 		dotElem.setAttribute('data-size', size);
-		dotElem.setAttribute('data-value', id);
 		dotElem.classList.add('dot');
 		dotElem.style.right = `${position[0]}px`;
 		dotElem.style.top = `${position[1]}px`;
@@ -41,9 +39,10 @@ class Game {
 		this.dots = [];
 		this.speed = 10;
 		this.DOT_COLORS = ['#694dff', '#FEC0ED', '#F9897C', '##D3FEEF'];
-		this.DOT_SPAWN_RATE = 1000;
+		this.DOT_SPAWN_RATE = 1000; // in milliseconds
 		this.MAX_DOT_SIZE = 100;
-		this.PX_SPEED = 10;
+		this.MIN_DOT_SIZE = 10;
+		// this.PX_SPEED = 10; //TODO: remove this and any comments
 		this.intervalRef = null;
 		this.animateRef = null;
 	}
@@ -95,7 +94,11 @@ class Game {
 
 	createDot() {
 		// 10px in diameter to 100px in diameter.
-		const randSize = this.randomIntFromInterval(10, 100);
+		//TODO: only get divisable by 10
+		const randSize = this.randomIntFromInterval(
+			this.MIN_DOT_SIZE,
+			this.MAX_DOT_SIZE
+		);
 		const randPosition = this.randomIntFromInterval(
 			0,
 			this.gameBoard.width - randSize
@@ -122,14 +125,11 @@ class Game {
 	}
 
 	moveDots() {
-		const oldDots = this.dots;
-		const newDots = [];
 		const FRAMES_PER_SECOND = 60;
 
-		oldDots.forEach((dot) => {
+		this.dots.forEach((dot) => {
 			const {
 				position: [, currentY],
-				size,
 				dotElem,
 			} = dot;
 
@@ -138,18 +138,13 @@ class Game {
 			const newY = Math.ceil(currentY + this.speed / FRAMES_PER_SECOND);
 			dot.setPositionY(newY);
 
-			//TODO: refactor to destroy dot at a different value
 			// if dot is in screen, move otherwise delete
-			if (newY <= this.gameBoard.height - size) {
-				// console.log(this.dots, newY);
-				newDots.push(dot);
-			} else {
+			if (this.gameBoard.height < newY) {
 				this.removeDot(dotElem);
 			}
 		});
 
 		this.animateRef = requestAnimationFrame(this.moveDots.bind(this));
-		return newDots;
 	}
 
 	onDotClick(event) {
@@ -163,7 +158,8 @@ class Game {
 	}
 
 	removeDot(dotElem) {
-		const dotId = dotElem.getAttribute('data-value');
+		const dotId = dotElem.id;
+
 		// delete node from DOM and state
 		dotElem.parentNode.removeChild(dotElem);
 
@@ -173,8 +169,8 @@ class Game {
 	}
 
 	updateScore(dotSize) {
-		const newScore = this.MAX_DOT_SIZE - dotSize;
-
+		const newScore = this.getDotValue(dotSize);
+		debugger;
 		this.score += newScore;
 
 		const scoreBoard = document.getElementById('points');
@@ -194,6 +190,10 @@ class Game {
 		} else {
 			gameBoard.classList.remove('game-playground--paused');
 		}
+	}
+
+	getDotValue(size) {
+		return 11 - size * 0.1;
 	}
 
 	randomIntFromInterval(min, max) {

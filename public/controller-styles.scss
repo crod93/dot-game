@@ -1,3 +1,4 @@
+// TODO: refactor using var colors
 .controller {
 	&--container {
 		border: 2px solid;
@@ -20,11 +21,16 @@
 			background-color: transparent;
 			font-size: 1.5rem;
 			height: 4.5rem;
-			box-shadow: 1.7px 2.9px 1.7px -36px rgba(0, 0, 0, 0.172),
-				5.8px 9.6px 5.8px -36px rgba(0, 0, 0, 0.265),
-				26px 43px 26px -36px rgba(0, 0, 0, 0.44);
+			box-shadow: 0.25rem 0.25rem gray;
 			cursor: pointer;
 			margin-right: 1rem;
+			transition: all 0.5s ease;
+
+			&:hover {
+				background-color: pink;
+				border-color: transparent;
+				color: #444;
+			}
 		}
 	}
 
