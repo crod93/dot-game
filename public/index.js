@@ -94,11 +94,13 @@ class Game {
 
 	createDot() {
 		// 10px in diameter to 100px in diameter.
-		//TODO: only get divisable by 10
-		const randSize = this.randomIntFromInterval(
-			this.MIN_DOT_SIZE,
-			this.MAX_DOT_SIZE
-		);
+		// only get divisible by 10
+		const randSize =
+			this.randomIntFromInterval(
+				this.MIN_DOT_SIZE / 10,
+				this.MAX_DOT_SIZE / 10
+			) * 10;
+
 		const randPosition = this.randomIntFromInterval(
 			0,
 			this.gameBoard.width - randSize
@@ -170,7 +172,7 @@ class Game {
 
 	updateScore(dotSize) {
 		const newScore = this.getDotValue(dotSize);
-		debugger;
+
 		this.score += newScore;
 
 		const scoreBoard = document.getElementById('points');
