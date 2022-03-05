@@ -1,5 +1,7 @@
+const THEME_COLORS = ['#6246ea', '#e45858', '#D3FEEF', '#fffffe', '#d1d1e9'];
+
 class Dot {
-	constructor(id, size, color = 'white', position = [0, 0]) {
+	constructor(id, size, color = '#fffffe', position = [0, 0]) {
 		// add dot to DOM with size
 		const dotElem = document.createElement('span');
 
@@ -38,7 +40,7 @@ class Game {
 		this.isPlaying = false;
 		this.dots = [];
 		this.speed = 10;
-		this.DOT_COLORS = ['#694dff', '#FEC0ED', '#F9897C', '##D3FEEF'];
+		this.DOT_COLORS = THEME_COLORS;
 		this.DOT_SPAWN_RATE = 1000; // in milliseconds
 		this.MAX_DOT_SIZE = 100;
 		this.MIN_DOT_SIZE = 10;
@@ -106,6 +108,7 @@ class Game {
 			this.gameBoard.width - randSize
 		);
 		const colorIndex = this.randomIntFromInterval(0, this.DOT_COLORS.length);
+		// start dots half way in container element
 		const initialPosition = [
 			randPosition,
 			this.gameControllerElem.offsetHeight / 2,

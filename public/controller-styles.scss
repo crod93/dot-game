@@ -1,11 +1,11 @@
-// TODO: refactor using var colors
 .controller {
 	&--container {
 		border: 2px solid;
 		padding: 2rem;
 		position: relative;
-		background-color: white;
+		background-color: $secondary;
 		z-index: 2;
+		opacity: 95%;
 	}
 
 	&--main {
@@ -25,24 +25,14 @@
 			cursor: pointer;
 			margin-right: 1rem;
 			transition: all 0.5s ease;
+			background-color: $primary;
+			color: $background;
 
 			&:hover {
-				background-color: pink;
+				background-color: $ternary;
 				border-color: transparent;
-				color: #444;
 			}
 		}
-	}
-
-	&--speed-slider {
-		width: 10px;
-		height: 25px;
-		border-radius: 3px;
-		position: relative;
-		left: 10px;
-		top: -10px;
-		background: black;
-		cursor: pointer;
 	}
 }
 
@@ -51,17 +41,17 @@
 		width: 100%;
 		-webkit-appearance: none;
 		height: 7px;
-		background: black;
+		background: $contrast;
 		border-radius: 5px;
 		margin-bottom: 1rem;
 
 		&::-webkit-slider-thumb {
 			-webkit-appearance: none;
-			border: 1px solid #000000;
+			border: 1px solid $contrast;
 			height: 36px;
 			width: 16px;
 			border-radius: 3px;
-			background: #ffffff;
+			background: $background;
 			cursor: pointer;
 			box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
 		}
