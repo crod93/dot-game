@@ -1,4 +1,4 @@
-const THEME_COLORS = ['#6246ea', '#e45858', '#D3FEEF', '#fffffe', '#d1d1e9'];
+const THEME_COLORS = ['#6246ea', '#e45858', '#D3FEEF', '#fffffe'];
 
 class Dot {
 	constructor(id, size, color = '#fffffe', position = [0, 0]) {
@@ -43,7 +43,6 @@ class Game {
 		this.DOT_SPAWN_RATE = 1000; // in milliseconds
 		this.MAX_DOT_SIZE = 100;
 		this.MIN_DOT_SIZE = 10;
-		this.PX_SPEED = 10; //TODO: remove this and any comments
 		this.intervalRef = null;
 		this.animateRef = null;
 	}
