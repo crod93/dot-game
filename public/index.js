@@ -40,11 +40,10 @@ class Game {
 		this.isPlaying = false;
 		this.dots = [];
 		this.speed = 10;
-		this.DOT_COLORS = THEME_COLORS;
 		this.DOT_SPAWN_RATE = 1000; // in milliseconds
 		this.MAX_DOT_SIZE = 100;
 		this.MIN_DOT_SIZE = 10;
-		// this.PX_SPEED = 10; //TODO: remove this and any comments
+		this.PX_SPEED = 10; //TODO: remove this and any comments
 		this.intervalRef = null;
 		this.animateRef = null;
 	}
@@ -107,16 +106,18 @@ class Game {
 			0,
 			this.gameBoard.width - randSize
 		);
-		const colorIndex = this.randomIntFromInterval(0, this.DOT_COLORS.length);
+		const colorIndex = this.randomIntFromInterval(0, THEME_COLORS.length);
+		const randId = this.randomIntFromInterval(0, 1000);
 		// start dots half way in container element
 		const initialPosition = [
 			randPosition,
 			this.gameControllerElem.offsetHeight / 2,
 		];
+
 		const dot = new Dot(
-			randPosition,
+			randId,
 			randSize,
-			this.DOT_COLORS[colorIndex],
+			THEME_COLORS[colorIndex],
 			initialPosition
 		);
 

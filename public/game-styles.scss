@@ -20,10 +20,11 @@
 	position: relative;
 	z-index: 1;
 	min-height: 100vh;
+	background-color: $secondary;
 }
 
 .game-playground--paused {
-	background-image: linear-gradient(360deg, #ffffff, $ternary) !important;
+	background-image: linear-gradient(360deg, $secondary, $ternary) !important;
 	background-size: 400% 400%;
 	animation: flashing 3s ease infinite;
 
