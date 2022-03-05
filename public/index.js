@@ -138,8 +138,6 @@ class Game {
 				dotElem,
 			} = dot;
 
-			//TODO: double check
-			// const newY = currentY + (this.PX_SPEED * this.speed) / FRAMES_PER_SECOND;
 			const newY = Math.ceil(currentY + this.speed / FRAMES_PER_SECOND);
 			dot.setPositionY(newY);
 
