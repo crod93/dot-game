@@ -31,8 +31,6 @@ class Dot {
 			console.log('invalid value for dot position');
 		}
 	}
-
-	getDotRelativePosition() {}
 }
 
 class Game {
@@ -114,7 +112,8 @@ class Game {
 			this.gameBoardElem.offsetWidth - randSize
 		);
 		const colorIndex = this.randomIntFromInterval(0, THEME_COLORS.length);
-		const randId = this.randomIntFromInterval(0, 1000);
+		const randId = this.randomIntFromInterval(0, 10000);
+
 		// start dots half way in container element
 		const initialPosition = [
 			randPosition,
