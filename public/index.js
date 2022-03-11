@@ -11,7 +11,7 @@ class Dot {
 		dotElem.setAttribute('id', id.toString());
 		dotElem.setAttribute('data-size', size);
 		dotElem.classList.add('dot');
-		dotElem.style.right = `${position[0]}px`;
+		dotElem.style.left = `${position[0]}px`;
 		dotElem.style.top = `${position[1]}px`;
 
 		this.id = id.toString();
@@ -20,10 +20,19 @@ class Dot {
 		this.dotElem = dotElem;
 	}
 
-	setPositionY(position) {
-		this.dotElem.style.top = `${position}px`;
-		this.position[1] = position;
+	setPosition(axis, value) {
+		if (axis.toLowerCase() === 'x') {
+			this.dotElem.style.left = `${value}px`;
+			this.position[0] = value;
+		} else if (axis.toLowerCase() === 'y') {
+			this.dotElem.style.top = `${value}px`;
+			this.position[1] = value;
+		} else {
+			console.log('invalid value for dot position');
+		}
 	}
+
+	getDotRelativePosition() {}
 }
 
 class Game {
@@ -31,10 +40,7 @@ class Game {
 		const gameBoard = document.getElementById('game-playground');
 		const gameController = document.getElementById('controller--container');
 
-		this.gameBoard = {
-			height: gameBoard.offsetHeight,
-			width: gameBoard.offsetWidth,
-		};
+		this.gameBoardElem = gameBoard;
 		this.gameControllerElem = gameController;
 		this.score = 0;
 		this.isPlaying = false;
@@ -81,6 +87,8 @@ class Game {
 			this.speed = newSpeed;
 			speedLabel.textContent = newSpeed;
 		});
+
+		window.addEventListener('resize', this.handleWindowResize.bind(this));
 	}
 
 	stop() {
@@ -103,7 +111,7 @@ class Game {
 
 		const randPosition = this.randomIntFromInterval(
 			0,
-			this.gameBoard.width - randSize
+			this.gameBoardElem.offsetWidth - randSize
 		);
 		const colorIndex = this.randomIntFromInterval(0, THEME_COLORS.length);
 		const randId = this.randomIntFromInterval(0, 1000);
@@ -139,10 +147,10 @@ class Game {
 			} = dot;
 
 			const newY = Math.ceil(currentY + this.speed / FRAMES_PER_SECOND);
-			dot.setPositionY(newY);
+			dot.setPosition('y', newY);
 
 			// if dot is in screen, move otherwise delete
-			if (this.gameBoard.height < newY) {
+			if (this.gameBoardElem.offsetHeight < newY) {
 				this.removeDot(dotElem);
 			}
 		});
@@ -183,18 +191,37 @@ class Game {
 
 	togglePausedDisplay() {
 		const [pausedTitle] = document.getElementsByClassName('game-state--paused');
-		const gameBoard = document.getElementById('game-playground');
 
 		pausedTitle.style.display = !this.isPlaying ? 'block' : 'none';
 
 		// toggling of paused styles
 		if (!this.isPlaying) {
-			gameBoard.classList.add('game-playground--paused');
+			this.gameBoardElem.classList.add('game-playground--paused');
 		} else {
-			gameBoard.classList.remove('game-playground--paused');
+			this.gameBoardElem.classList.remove('game-playground--paused');
 		}
 	}
+	handleWindowResize() {
+		const DEBOUNCE_TIME = 200;
+		let timeoutId = null;
 
+		clearTimeout(timeoutId);
+		// use debounce method for window resize
+		timeoutId = setTimeout(() => {
+			this.dots.forEach((dot) => {
+				if (this.gameBoardElem.offsetWidth <= dot.position[0] + dot.size) {
+					const newX = this.gameBoardElem.offsetWidth - dot.size;
+
+					dot.setPosition('x', newX);
+				}
+				if (this.gameBoardElem.offsetHeight <= dot.position[1] + dot.size) {
+					const newY = this.gameBoardElem.offsetHeight - dot.size;
+
+					dot.setPosition('y', newY);
+				}
+			});
+		}, DEBOUNCE_TIME);
+	}
 	getDotValue(size) {
 		return 11 - size * 0.1;
 	}
