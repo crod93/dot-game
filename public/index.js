@@ -86,7 +86,14 @@ class Game {
 			speedLabel.textContent = newSpeed;
 		});
 
-		window.addEventListener('resize', this.handleWindowResize.bind(this));
+		window.addEventListener('resize', () => {
+			const DEBOUNCE_TIME = 2000;
+			let timeoutId = null;
+
+			clearTimeout(timeoutId);
+			// use debounce method for window resize
+			timeoutId = setTimeout(this.handleWindowResize.bind(this), DEBOUNCE_TIME);
+		});
 	}
 
 	stop() {
@@ -201,25 +208,16 @@ class Game {
 		}
 	}
 	handleWindowResize() {
-		const DEBOUNCE_TIME = 200;
-		let timeoutId = null;
-
-		clearTimeout(timeoutId);
-		// use debounce method for window resize
-		timeoutId = setTimeout(() => {
-			this.dots.forEach((dot) => {
-				if (this.gameBoardElem.offsetWidth <= dot.position[0] + dot.size) {
-					const newX = this.gameBoardElem.offsetWidth - dot.size;
-
-					dot.setPosition('x', newX);
-				}
-				if (this.gameBoardElem.offsetHeight <= dot.position[1] + dot.size) {
-					const newY = this.gameBoardElem.offsetHeight - dot.size;
-
-					dot.setPosition('y', newY);
-				}
-			});
-		}, DEBOUNCE_TIME);
+		this.dots.forEach((dot) => {
+			if (this.gameBoardElem.offsetWidth <= dot.position[0] + dot.size) {
+				const newX = this.gameBoardElem.offsetWidth - dot.size;
+				dot.setPosition('x', newX);
+			}
+			if (this.gameBoardElem.offsetHeight <= dot.position[1] + dot.size) {
+				const newY = this.gameBoardElem.offsetHeight - dot.size;
+				dot.setPosition('y', newY);
+			}
+		});
 	}
 	getDotValue(size) {
 		return 11 - size * 0.1;
