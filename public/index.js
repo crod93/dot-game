@@ -1,20 +1,22 @@
 const THEME_COLORS = ['#6246ea', '#e45858', '#D3FEEF', '#fffffe'];
 
 class Dot {
-	constructor(id, size, color = '#fffffe', position = [0, 0]) {
+	constructor(size, color = '#fffffe', position = [0, 0]) {
+		const id = this.createId();
+
 		// add dot to DOM with size
 		const dotElem = document.createElement('span');
 
 		dotElem.style.height = `${size}px`;
 		dotElem.style.width = `${size}px`;
 		dotElem.style.backgroundColor = color;
-		dotElem.setAttribute('id', id.toString());
+		dotElem.setAttribute('id', id);
 		dotElem.setAttribute('data-size', size);
 		dotElem.classList.add('dot');
 		dotElem.style.left = `${position[0]}px`;
 		dotElem.style.top = `${position[1]}px`;
 
-		this.id = id.toString();
+		this.id = id;
 		this.position = position; // this a tuple, used x,y numbers
 		this.size = size;
 		this.dotElem = dotElem;
@@ -30,6 +32,10 @@ class Dot {
 		} else {
 			console.log('invalid value for dot position');
 		}
+	}
+
+	createId() {
+		return Date.now().toString(36) + Math.random().toString(36).substring(2);
 	}
 }
 
@@ -119,7 +125,6 @@ class Game {
 			this.gameBoardElem.offsetWidth - randSize
 		);
 		const colorIndex = this.randomIntFromInterval(0, THEME_COLORS.length);
-		const randId = this.randomIntFromInterval(0, 10000);
 
 		// start dots half way in container element
 		const initialPosition = [
@@ -127,12 +132,7 @@ class Game {
 			this.gameControllerElem.offsetHeight / 2,
 		];
 
-		const dot = new Dot(
-			randId,
-			randSize,
-			THEME_COLORS[colorIndex],
-			initialPosition
-		);
+		const dot = new Dot(randSize, THEME_COLORS[colorIndex], initialPosition);
 
 		document.getElementById('game-playground').appendChild(dot.dotElem);
 
