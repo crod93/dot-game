@@ -43,9 +43,11 @@ class Game {
 	constructor() {
 		const gameBoard = document.getElementById('game-playground');
 		const gameController = document.getElementById('controller--container');
+		const startButton = document.getElementById('start-btn');
 
 		this.gameBoardElem = gameBoard;
 		this.gameControllerElem = gameController;
+		this.startBtn = startButton;
 		this.score = 0;
 		this.isPlaying = false;
 		this.dots = [];
@@ -58,32 +60,27 @@ class Game {
 	}
 
 	play() {
+		this.startBtn.textContent = 'Pause';
 		this.intervalRef = setInterval(
 			this.spawnDots.bind(this),
 			this.DOT_SPAWN_RATE
 		);
 
 		this.animateRef = requestAnimationFrame(this.moveDots.bind(this));
+		this.isPlaying = !this.isPlaying;
+		this.togglePausedDisplay();
 	}
 
 	render() {
-		const startButton = document.getElementById('start-btn');
-
 		const speedDial = document.getElementById('slider-dial');
 		const speedLabel = document.getElementById('speed-value');
 
-		startButton.addEventListener('click', () => {
+		this.startBtn.addEventListener('click', () => {
 			if (!this.isPlaying) {
-				startButton.textContent = 'Pause';
-
 				this.play();
 			} else {
-				startButton.textContent = 'Start';
 				this.stop();
 			}
-
-			this.isPlaying = !this.isPlaying;
-			this.togglePausedDisplay();
 		});
 
 		speedDial.addEventListener('change', (event) => {
@@ -100,11 +97,21 @@ class Game {
 			// use debounce method for window resize
 			timeoutId = setTimeout(this.handleWindowResize.bind(this), DEBOUNCE_TIME);
 		});
+
+		// if user leaves screen, stop game
+		document.addEventListener('mouseleave', () => {
+			if (this.isPlaying) {
+				this.stop();
+			}
+		});
 	}
 
 	stop() {
+		this.startBtn.textContent = 'Start';
 		clearInterval(this.intervalRef);
 		cancelAnimationFrame(this.animateRef);
+		this.isPlaying = !this.isPlaying;
+		this.togglePausedDisplay();
 	}
 
 	spawnDots() {
