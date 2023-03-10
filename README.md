@@ -4,16 +4,6 @@ The goal of this exercise is to create a game. In the game, dots move from the t
 
 ![mockup](https://cdn.gomix.com/84ca8f35-cd1c-4d74-ad6f-f1f108b5b85a%2Fdot-game-with-banner.png)
 
-## Guidelines for Completing the Exercise
-
-- Your application should work in current Chrome.
-- You can edit any file in the project, and add any assets you require (see below).
-- You may look up anything you'd like.
-- You should not use a JavaScript library.
-- Do not use HTML Canvas to implement the UI.
-- You must write at least the CSS necessary to achieve the basic layout of the game; you may also write additional CSS to improve the design of the game.
-- The project is set up to use Sass, but you may also author plain CSS, or add a different CSS preprocessor.
-- Your finished code should be of a quality that you would submit to your peers for a code review.
 
 ## Building the Game
 
